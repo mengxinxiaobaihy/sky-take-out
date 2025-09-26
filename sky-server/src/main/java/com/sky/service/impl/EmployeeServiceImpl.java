@@ -1,16 +1,20 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -92,6 +97,42 @@ public class EmployeeServiceImpl implements EmployeeService {
         //上面把这些属性该封装的都封装好了，封装好之后--->调用持久层把这条数据插入
         employeeMapper.insert(employee);
 
+
+    }
+    /**
+     * 分页查询
+     * @param employeePageQueryDTO
+     * @return
+     */
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+//        如何实现这个分页查询呢？--->底层是基于数据库层面的分页
+//        比如要查第一页查10条：select * from employee limit 0,10
+//        而EmployeePageQueryDTO里面已经把页码还有每条的记录数传过来了，这样就可以动态的把这两个参数计算出来然后拼到sql里
+//        缺点就是太麻烦，需要自己去拼自己去计算--->pagehelper插件--->需要告诉这个插件现在想查第几页并且想查几条：pageHelper（）方法
+
+        //开始分页查询
+        PageHelper.startPage(employeePageQueryDTO.getPage(),employeePageQueryDTO.getPageSize());
+
+        //接下来需要编写一条sql来执行查询
+        Page <Employee> page =employeeMapper.pageQuery(employeePageQueryDTO);
+        long total = page.getTotal();
+        List<Employee> result = page.getResult();
+
+        return new PageResult(total,result);
+    }
+
+    /**
+     * 启用禁用员工账号
+     * @param status
+     * @param id
+     */
+    public void startOrStop(Integer status, Long id) {
+
+        //update employee set status = ? where id = ?
+
+        Employee employee = Employee.builder().status(status)
+                .id(id).build();
+        employeeMapper.update(employee);
 
     }
 }
