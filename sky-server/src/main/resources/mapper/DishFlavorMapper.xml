@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishFlavorMapper">
+
+
+    <insert id="insertBatch">
+        insert into dish_flavor(dish_id, name, value) VALUES
+        <!--因为传进来得是是一个集合对象要通过一个动态sql-->
+        <foreach collection="flavors" item="df" separator=",">
+                (#{df.dishId},#{df.name},#{df.value})
+        <!--注意：需要dish_id传进来，但是我们看从DishServiceImpl.java这里传过来得参数是DishFlavor,虽然DishFlavor里有dishId这个
+        属性，但是前端并不会传进来，因为我们当前是新增菜品，这个菜品都还没有创建出来，如何知道dishId呢，那dishId应该如何获取呢？
+        我们可以回到DishServiceImpl中可以看到：dishMapper.insert(dish);/这里已经保存了菜品，这时候id就分配号了，所以我们要通过
+        Long dishId = dish.getId();但是呢并不能直接get到，需要到DishServiceImpl中需要把刚才产生得主键值返回，如何返回？
+        useGeneratedKeys="true"这表示我们需要获得刚才insert语句插入得时候生成得主键值;如何返回给我们程序呢？
+        keyProperty="id"这个id表示我们传进来这个Dish对象它的属性，我们希望得是把这个id得值赋值给Dish中得id属性
+        上述在insert语句后面的东西总之就表示在insert语句执行完之后产生的主键值会赋给我们的id属性，对应的：在DishServiceImpl中就能获取到了-->
+        </foreach>
+    </insert>
+</mapper>

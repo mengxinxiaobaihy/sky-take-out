@@ -13,6 +13,8 @@ spring:
       username: ${sky.datasource.username}
       password: ${sky.datasource.password}
 
+
+
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml

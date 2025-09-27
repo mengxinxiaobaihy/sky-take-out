@@ -47,8 +47,8 @@ public class AutoFillAspect {
 
         //获取到当前被拦截的方法上的数据库操作类型
         MethodSignature signature =(MethodSignature) joinPoint.getSignature();//方法签名对象
-        AutoFill annotation = signature.getMethod().getAnnotation(AutoFill.class);//获得方法上的注解对象
-        OperationType operationType = annotation.value();//获得数据库操作类型
+        AutoFill autoFill = signature.getMethod().getAnnotation(AutoFill.class);//获得方法上的注解对象
+        OperationType operationType = autoFill.value();//获得数据库操作类型
 
         //获取到当前被拦截的方法的参数--实体对象
         Object[] args = joinPoint.getArgs();
@@ -67,7 +67,7 @@ public class AutoFillAspect {
             try {
                 Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
                 Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
-                Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, LocalDateTime.class);
+                Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
                 Method setCreateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, Long.class);
 
                 //通过反射为对象属性赋值
