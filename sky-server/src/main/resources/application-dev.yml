@@ -7,11 +7,17 @@ sky:
     username: root
     password: aq1999320nhy
 
+  redis:
+    host: localhost
+    port: 6379
+    database: 1
+
 alioss:
   endpoint: http://127.0.0.1:9000
   access-key-id: minioadmin
   access-key-secret: 12345678
   bucket-name: sky-take-out
+
 
 
 
